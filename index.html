@@ -13,20 +13,19 @@ body {
     color: #fff;
 }
 
-/* ✅ FIXED BANNER (NO CROPPING) */
+/* HEADER / BANNER */
 header {
     height: 200px;
     background-image: url("TheGambler BANNER.png");
-    background-size: contain;     /* shows full image */
-    background-position: center;  /* centers it */
+    background-size: contain;
+    background-position: center;
     background-repeat: no-repeat;
-    background-color: #111;       /* fills empty space */
+    background-color: #111;
     display: flex;
     align-items: center;
     position: relative;
 }
 
-/* dark overlay for readability */
 header::before {
     content: "";
     position: absolute;
@@ -37,7 +36,6 @@ header::before {
     background: rgba(0,0,0,0.45);
 }
 
-/* TOP BAR */
 .header-container{
     display:flex;
     justify-content:space-between;
@@ -51,7 +49,6 @@ header::before {
     color: white;
 }
 
-/* CART BUTTON */
 .cart-btn {
     cursor: pointer;
     font-size: 18px;
@@ -64,6 +61,7 @@ header::before {
     background:#555;
 }
 
+/* NAV */
 nav {
     display: flex;
     justify-content: center;
@@ -86,6 +84,7 @@ nav button:hover {
     background: #666;
 }
 
+/* PRODUCTS */
 .products {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -117,7 +116,10 @@ button.add {
     cursor: pointer;
 }
 
-/* CART PANEL */
+/* =========================
+   SLIDING CART (UPDATED)
+========================= */
+
 .cart {
     position: fixed;
     right: 0;
@@ -128,19 +130,47 @@ button.add {
     padding: 15px;
     overflow-y: auto;
     border-left: 2px solid #333;
-    display: none;
     z-index: 999;
+
+    /* hidden off-screen */
+    transform: translateX(100%);
+    transition: transform 0.35s ease-in-out;
+}
+
+/* when open */
+.cart.open {
+    transform: translateX(0);
 }
 
 .cart h2 {
     text-align: center;
 }
 
+/* CLOSE BUTTON */
+.close-cart {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: red;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.close-cart:hover {
+    background: darkred;
+}
+
+/* CART ITEMS */
 .cart-item {
     border-bottom: 1px solid #333;
     padding: 10px 0;
 }
 
+/* CHECKOUT */
 .checkout {
     margin-top: 15px;
     padding: 10px;
@@ -181,9 +211,14 @@ button.add {
 
 <div class="products" id="productList"></div>
 
+<!-- CART -->
 <div class="cart" id="cartPanel">
 <h2>Cart</h2>
+
+<button class="close-cart" onclick="closeCart()">✖</button>
+
 <div id="cartItems"></div>
+
 <div class="checkout" onclick="checkout()">Checkout (PayPal)</div>
 </div>
 
@@ -200,22 +235,13 @@ const products = [
     {id:7, name:"Bible Cover Premium", category:"Bible Covers"},
     {id:8, name:"Laptop Sleeve 13”", category:"Laptop Covers"},
     {id:9, name:"Glasses Case Soft", category:"Glasses Cases"},
-    {id:10, name:"Custom Order Request", category:"Custom Orders"},
-    {id:11, name:"Vintage Wallet", category:"Wallets"},
-    {id:12, name:"Double Stitch Belt", category:"Belts"},
-    {id:13, name:"Studded Collar", category:"Collars"},
-    {id:14, name:"Braided Bracelet", category:"Bracelets"},
-    {id:15, name:"Metal Key Clip", category:"Keychains"},
-    {id:16, name:"Journal Cover Rustic", category:"Notebook Covers"},
-    {id:17, name:"Bible Cover Deluxe", category:"Bible Covers"},
-    {id:18, name:"Laptop Case Pro", category:"Laptop Covers"},
-    {id:19, name:"Hard Glasses Case", category:"Glasses Cases"},
-    {id:20, name:"Personal Custom Design", category:"Custom Orders"},
+    {id:10, name:"Custom Order Request", category:"Custom Orders"}
 ];
 
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 let currentFilter = "all";
 
+/* PRODUCTS */
 function img(id){
     return `https://via.placeholder.com/300x200.png?text=Product+${id}`;
 }
@@ -242,11 +268,16 @@ function filter(cat){
     displayProducts();
 }
 
+/* CART SLIDE CONTROLS */
 function toggleCart(){
-    const panel = document.getElementById("cartPanel");
-    panel.style.display = panel.style.display === "block" ? "none" : "block";
+    document.getElementById("cartPanel").classList.toggle("open");
 }
 
+function closeCart(){
+    document.getElementById("cartPanel").classList.remove("open");
+}
+
+/* CART LOGIC */
 function addToCart(id){
     const item = products.find(p => p.id === id);
     cart.push(item);
@@ -277,6 +308,7 @@ function updateCart(){
     count.innerText = cart.length;
 }
 
+/* CHECKOUT */
 function checkout(){
     if(cart.length === 0){
         alert("Cart is empty");
@@ -285,8 +317,11 @@ function checkout(){
 
     alert("Redirecting to PayPal checkout...\nEmail: " + PAYPAL_EMAIL);
     window.open("https://www.paypal.com/cgi-bin/webscr", "_blank");
+
+    closeCart();
 }
 
+/* INIT */
 displayProducts();
 updateCart();
 </script>
