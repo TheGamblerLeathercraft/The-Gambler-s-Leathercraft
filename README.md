@@ -16,9 +16,28 @@ body {
 header {
     background: #1c1c1c;
     padding: 20px;
-    text-align: center;
     font-size: 24px;
     font-weight: bold;
+}
+
+/* TOP BAR FLEX (UPDATED) */
+.header-container{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+/* CART BUTTON */
+.cart-btn {
+    cursor: pointer;
+    font-size: 18px;
+    background: #333;
+    padding: 8px 12px;
+    border-radius: 6px;
+}
+
+.cart-btn:hover {
+    background:#555;
 }
 
 nav {
@@ -74,6 +93,7 @@ button.add {
     cursor: pointer;
 }
 
+/* CART PANEL (UPDATED - hidden by default) */
 .cart {
     position: fixed;
     right: 0;
@@ -84,6 +104,8 @@ button.add {
     padding: 15px;
     overflow-y: auto;
     border-left: 2px solid #333;
+    display: none;
+    z-index: 999;
 }
 
 .cart h2 {
@@ -109,7 +131,15 @@ button.add {
 
 <body>
 
-<header>Moody Leather Craft Store</header>
+<header>
+<div class="header-container">
+    <div>Moody Leather Craft Store</div>
+
+    <div class="cart-btn" onclick="toggleCart()">
+        🛒 Cart (<span id="cartCount">0</span>)
+    </div>
+</div>
+</header>
 
 <nav>
 <button onclick="filter('all')">All</button>
@@ -127,17 +157,16 @@ button.add {
 
 <div class="products" id="productList"></div>
 
-<div class="cart">
+<!-- CART (NOW HIDDEN UNTIL CLICKED) -->
+<div class="cart" id="cartPanel">
 <h2>Cart</h2>
 <div id="cartItems"></div>
 <div class="checkout" onclick="checkout()">Checkout (PayPal)</div>
 </div>
 
 <script>
-// 👉 Placeholder PayPal email
 const PAYPAL_EMAIL = "your-paypal-email@example.com";
 
-// PRODUCTS
 const products = [
     {id:1, name:"Classic Wallet", category:"Wallets"},
     {id:2, name:"Rugged Belt", category:"Belts"},
@@ -149,8 +178,6 @@ const products = [
     {id:8, name:"Laptop Sleeve 13”", category:"Laptop Covers"},
     {id:9, name:"Glasses Case Soft", category:"Glasses Cases"},
     {id:10, name:"Custom Order Request", category:"Custom Orders"},
-
-// 10 extra placeholder items
     {id:11, name:"Vintage Wallet", category:"Wallets"},
     {id:12, name:"Double Stitch Belt", category:"Belts"},
     {id:13, name:"Studded Collar", category:"Collars"},
@@ -166,12 +193,10 @@ const products = [
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 let currentFilter = "all";
 
-// PLACEHOLDER IMAGE (swap later easily)
 function img(id){
     return `https://via.placeholder.com/300x200.png?text=Product+${id}`;
 }
 
-// DISPLAY PRODUCTS
 function displayProducts(){
     const list = document.getElementById("productList");
     list.innerHTML = "";
@@ -189,13 +214,17 @@ function displayProducts(){
     });
 }
 
-// FILTER
 function filter(cat){
     currentFilter = cat;
     displayProducts();
 }
 
-// CART FUNCTIONS
+/* TOGGLE CART (NEW) */
+function toggleCart(){
+    const panel = document.getElementById("cartPanel");
+    panel.style.display = panel.style.display === "block" ? "none" : "block";
+}
+
 function addToCart(id){
     const item = products.find(p => p.id === id);
     cart.push(item);
@@ -211,6 +240,8 @@ function updateCart(){
     localStorage.setItem("cart", JSON.stringify(cart));
 
     const cartDiv = document.getElementById("cartItems");
+    const count = document.getElementById("cartCount");
+
     cartDiv.innerHTML = "";
 
     cart.forEach((item,i)=>{
@@ -220,9 +251,10 @@ function updateCart(){
             <button onclick="removeItem(${i})">X</button>
         </div>`;
     });
+
+    count.innerText = cart.length;
 }
 
-// CHECKOUT (PayPal placeholder)
 function checkout(){
     if(cart.length === 0){
         alert("Cart is empty");
@@ -230,12 +262,9 @@ function checkout(){
     }
 
     alert("Redirecting to PayPal checkout...\nEmail: " + PAYPAL_EMAIL);
-
-    // Placeholder redirect (replace with real PayPal link later)
     window.open("https://www.paypal.com/cgi-bin/webscr", "_blank");
 }
 
-// INIT
 displayProducts();
 updateCart();
 </script>
