@@ -84,12 +84,17 @@ nav button:hover {
     background: #666;
 }
 
-/* PRODUCTS */
-.products {
+/* MAIN CONTENT */
+.section {
+    padding: 30px 20px;
+    text-align: center;
+}
+
+.featured-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 15px;
-    padding: 20px;
+    margin-top: 20px;
 }
 
 .product {
@@ -116,10 +121,37 @@ button.add {
     cursor: pointer;
 }
 
-/* =========================
-   SLIDING CART (UPDATED)
-========================= */
+/* BIO */
+.bio {
+    max-width: 800px;
+    margin: auto;
+    line-height: 1.6;
+    color: #ccc;
+}
 
+/* CONTACT BUTTON */
+.contact-wrapper {
+    display: flex;
+    justify-content: center;
+    margin: 50px 0;
+}
+
+.contact-btn {
+    padding: 15px 25px;
+    background: gold;
+    color: black;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.contact-btn:hover {
+    background: #e6c200;
+}
+
+/* CART */
 .cart {
     position: fixed;
     right: 0;
@@ -131,13 +163,10 @@ button.add {
     overflow-y: auto;
     border-left: 2px solid #333;
     z-index: 999;
-
-    /* hidden off-screen */
     transform: translateX(100%);
     transition: transform 0.35s ease-in-out;
 }
 
-/* when open */
 .cart.open {
     transform: translateX(0);
 }
@@ -146,7 +175,6 @@ button.add {
     text-align: center;
 }
 
-/* CLOSE BUTTON */
 .close-cart {
     position: absolute;
     top: 10px;
@@ -160,17 +188,11 @@ button.add {
     font-size: 14px;
 }
 
-.close-cart:hover {
-    background: darkred;
-}
-
-/* CART ITEMS */
 .cart-item {
     border-bottom: 1px solid #333;
     padding: 10px 0;
 }
 
-/* CHECKOUT */
 .checkout {
     margin-top: 15px;
     padding: 10px;
@@ -195,6 +217,7 @@ button.add {
 </div>
 </header>
 
+<!-- NAV CATEGORIES -->
 <nav>
 <button onclick="filter('all')">All</button>
 <button onclick="filter('Wallets')">Wallets</button>
@@ -209,7 +232,26 @@ button.add {
 <button onclick="filter('Custom Orders')">Custom Orders</button>
 </nav>
 
-<div class="products" id="productList"></div>
+<!-- FEATURED ITEMS -->
+<div class="section">
+    <h2>Featured Items</h2>
+    <div class="featured-grid" id="productList"></div>
+</div>
+
+<!-- BIO -->
+<div class="section">
+    <h2>Biography</h2>
+    <div class="bio">
+        Welcome to The Gambler's Leathercraft — where every piece is handcrafted with precision, grit, and character.
+        We specialize in durable, custom leather goods built to last a lifetime. Each item is made with attention to detail
+        and a passion for traditional craftsmanship.
+    </div>
+</div>
+
+<!-- CONTACT -->
+<div class="contact-wrapper">
+    <button class="contact-btn" onclick="contactUs()">Contact Us</button>
+</div>
 
 <!-- CART -->
 <div class="cart" id="cartPanel">
@@ -241,7 +283,7 @@ const products = [
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 let currentFilter = "all";
 
-/* PRODUCTS */
+/* DISPLAY PRODUCTS */
 function img(id){
     return `https://via.placeholder.com/300x200.png?text=Product+${id}`;
 }
@@ -268,7 +310,7 @@ function filter(cat){
     displayProducts();
 }
 
-/* CART SLIDE CONTROLS */
+/* CART */
 function toggleCart(){
     document.getElementById("cartPanel").classList.toggle("open");
 }
@@ -277,7 +319,6 @@ function closeCart(){
     document.getElementById("cartPanel").classList.remove("open");
 }
 
-/* CART LOGIC */
 function addToCart(id){
     const item = products.find(p => p.id === id);
     cart.push(item);
@@ -315,10 +356,14 @@ function checkout(){
         return;
     }
 
-    alert("Redirecting to PayPal checkout...\nEmail: " + PAYPAL_EMAIL);
+    alert("Redirecting to PayPal...");
     window.open("https://www.paypal.com/cgi-bin/webscr", "_blank");
-
     closeCart();
+}
+
+/* CONTACT */
+function contactUs(){
+    window.location.href = "mailto:your-email@example.com";
 }
 
 /* INIT */
